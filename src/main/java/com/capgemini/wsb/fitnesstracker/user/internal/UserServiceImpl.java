@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+/**
+Implementacja serwisu, operacje CRUD na użytkownikach
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -17,6 +21,9 @@ class UserServiceImpl implements UserService, UserProvider {
 
     private final UserRepository userRepository;
 
+    /**
+    Utworzenie nowego użytkownika
+     */
     @Override
     public User createUser(final User user) {
         log.info("Creating User {}", user);
@@ -26,19 +33,73 @@ class UserServiceImpl implements UserService, UserProvider {
         return userRepository.save(user);
     }
 
+    /**
+    Pobranie danych użytkownika na podstawie wprowadzonego identyfikatora
+     */
     @Override
     public Optional<User> getUser(final Long userId) {
         return userRepository.findById(userId);
     }
 
+    /**
+    Pobranie danych użytkownika na podstawie wprowadzonego adresu e-mail,
+    czyli wyświetlenie danych użytkownika, który posiada konkretny adres e-mail.
+     */
     @Override
     public Optional<User> getUserByEmail(final String email) {
         return userRepository.findByEmail(email);
     }
 
+    /**
+    Wyświetlenie wszystkich użytkowników w bazie
+     */
     @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    // Wprowadzenie dodatkowych metod
+
+    /**
+    Wylistowanie podstawowych informacji o wszystkich użytkownikach, w tym przypadku wyłącznie ID + nazwa klienta
+     */
+    public List<UserSummaryDTO> getAllUserSummaries() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UserSummaryDTO(user.getId(), user.getFirstName() + " " + user.getLastName()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     Usunięcie z bazy użytkownika o konkretnym ID
+     */
+    public void deleteUser (Long userId) {
+        log.info("User with ID {} was deleted", userId);
+        // Dodatkowa weryfikacja czy użytkownik od danym ID w ogóle istniał
+        if (!userRepository.existsById(userId)) {
+            // Wyrzucenie wyjątku
+            throw new IllegalArgumentException("There is no user with " + userId + " ID");
+        }
+        userRepository.deleteById(userId);
+    }
+
+    /**
+    Aktualizacja danych/parametrów wybranego użytkownika
+     */
+    public User updateUser(Long userId, User updatedUser) {
+        log.info("User with ID {} is going to be updated", userId);
+        User temporaryUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("There is no user with " + userId + " ID"));
+        temporaryUser.setFirstName(updatedUser.getFirstName());
+        temporaryUser.setLastName(updatedUser.getEmail());
+        temporaryUser.setBirthdate(updatedUser.getBirthdate());
+        return userRepository.save(temporaryUser);
+    }
+
+    /**
+    Wyszukiwanie danego użytkownika po adresie e-mail
+     */
+    public List<User> searchByEmail (String email) {
+        return userRepository.findByEmailContainingIgnoreCase(email);
     }
 
 }
