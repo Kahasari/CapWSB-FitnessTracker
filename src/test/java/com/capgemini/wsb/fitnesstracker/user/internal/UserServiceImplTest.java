@@ -30,6 +30,10 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
+    /**
+     Testy dla metod
+     */
     @Test
     void createUser() {
         User user = new User("Adam", "Małysz", LocalDate.of(1977, 12, 1), "adam.malysz@gmail.com");
@@ -82,8 +86,8 @@ class UserServiceImplTest {
 
         List<UserSummaryDTO> summaries = userService.getAllUserSummaries();
         Assertions.assertEquals(2, summaries.size());
-        Assertions.assertEquals("Adam Małysz", summaries.get(0).name());
-        Assertions.assertEquals("Adam Nawałka", summaries.get(1).name());
+        Assertions.assertEquals("Adam", summaries.get(0).name());
+        Assertions.assertEquals("Adam", summaries.get(1).name());
     }
 
     @Test
@@ -107,14 +111,28 @@ class UserServiceImplTest {
         User result = userService.updateUser(1L, updatedUser);
         Assertions.assertEquals(updatedUser, result);
     }
-
     @Test
-    void searchByEmail() {
-        User user = new User("Nikita", "Chruszczow", LocalDate.of(1955, 6, 3), "chruszcz@gmail.com.com");
-        List<User> users = List.of(user);
-        when(userRepository.findByEmailContainingIgnoreCase("nikita")).thenReturn(users);
+    void findUsersOlderThanX() {
+        User user1 = new User("Adam", "Małysz", LocalDate.of(1977, 12, 1), "adam.malysz@gmail.com");
+        User user2 = new User("Jan", "Kowalski", LocalDate.of(1995, 5, 15), "jan.kowalski@example.com");
+        List<User> users = Arrays.asList(user1, user2);
+        when(userRepository.findAll()).thenReturn(users);
 
-        List<User> foundUsers = userService.searchByEmail("nikita");
-        Assertions.assertEquals(users, foundUsers);
+        List<User> result = userService.findUsersOlderThanX(30);
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("Adam", result.get(0).getFirstName());
+    }
+    @Test
+    void findUsersByEmailContainingIgnoreCase() {
+        User user1 = new User("Adam", "Małysz", LocalDate.of(1977, 12, 1), "adam.malysz@gmail.com");
+        User user2 = new User("Jan", "Kowalski", LocalDate.of(1990, 5, 15), "jan.kowalski@example.com");
+        User user3 = new User("Alicja", "Broniecka", LocalDate.of(1985, 3, 22), "bronia@poczta.com");
+        List<User> users = Arrays.asList(user1, user2, user3);
+        when(userRepository.findAll()).thenReturn(users);
+
+        List<User> result = userService.findUsersByEmailContainingIgnoreCase("bron");
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("Alicja", result.get(0).getFirstName());
+
     }
 }

@@ -7,12 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
-Implementacja serwisu, operacje CRUD na użytkownikach
+ Implementacja serwisu, operacje CRUD na użytkownikach
  */
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ class UserServiceImpl implements UserService, UserProvider {
     private final UserRepository userRepository;
 
     /**
-    Utworzenie nowego użytkownika
+     Utworzenie nowego użytkownika
      */
     @Override
     public User createUser(final User user) {
@@ -34,7 +36,7 @@ class UserServiceImpl implements UserService, UserProvider {
     }
 
     /**
-    Pobranie danych użytkownika na podstawie wprowadzonego identyfikatora
+     Pobranie danych użytkownika na podstawie wprowadzonego identyfikatora
      */
     @Override
     public Optional<User> getUser(final Long userId) {
@@ -42,8 +44,8 @@ class UserServiceImpl implements UserService, UserProvider {
     }
 
     /**
-    Pobranie danych użytkownika na podstawie wprowadzonego adresu e-mail,
-    czyli wyświetlenie danych użytkownika, który posiada konkretny adres e-mail.
+     Pobranie danych użytkownika na podstawie wprowadzonego adresu e-mail,
+     czyli wyświetlenie danych użytkownika, który posiada konkretny adres e-mail.
      */
     @Override
     public Optional<User> getUserByEmail(final String email) {
@@ -51,7 +53,7 @@ class UserServiceImpl implements UserService, UserProvider {
     }
 
     /**
-    Wyświetlenie wszystkich użytkowników w bazie
+     Wyświetlenie wszystkich użytkowników w bazie
      */
     @Override
     public List<User> findAllUsers() {
@@ -61,12 +63,14 @@ class UserServiceImpl implements UserService, UserProvider {
     // Wprowadzenie dodatkowych metod
 
     /**
-    Wylistowanie podstawowych informacji o wszystkich użytkownikach, w tym przypadku wyłącznie ID + nazwa klienta
+     Wylistowanie podstawowych informacji o wszystkich użytkownikach, w tym przypadku wyłącznie ID + nazwa klienta
      */
+    // Zaktualizowano pod wytyczne, wcześniejs metoda zwracała ID + imię + nazwisko
+    // Powinna zwracać Id + imie, tak jak w przygotowanym rekordzie UserSummaryDTO.
     public List<UserSummaryDTO> getAllUserSummaries() {
         return userRepository.findAll()
                 .stream()
-                .map(user -> new UserSummaryDTO(user.getId(), user.getFirstName() + " " + user.getLastName()))
+                .map(user -> new UserSummaryDTO(user.getId(), user.getFirstName()))
                 .collect(Collectors.toList());
     }
 
@@ -84,22 +88,36 @@ class UserServiceImpl implements UserService, UserProvider {
     }
 
     /**
-    Aktualizacja danych/parametrów wybranego użytkownika
+     Aktualizacja danych/parametrów wybranego użytkownika
      */
     public User updateUser(Long userId, User updatedUser) {
         log.info("User with ID {} is going to be updated", userId);
         User temporaryUser = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("There is no user with " + userId + " ID"));
         temporaryUser.setFirstName(updatedUser.getFirstName());
-        temporaryUser.setLastName(updatedUser.getEmail());
+        temporaryUser.setLastName(updatedUser.getLastName());
         temporaryUser.setBirthdate(updatedUser.getBirthdate());
+        temporaryUser.setEmail(updatedUser.getEmail());
         return userRepository.save(temporaryUser);
     }
 
     /**
-    Wyszukiwanie danego użytkownika po adresie e-mail
+     Wyszukiwanie danego użytkownika jeśli jest starszy niż dany wiek
      */
-    public List<User> searchByEmail (String email) {
-        return userRepository.findByEmailContainingIgnoreCase(email);
+    public List<User> findUsersOlderThanX (int age) {
+        LocalDate localDate = LocalDate.now();
+        return userRepository.findAll().stream().filter(user -> {
+            LocalDate dateOfBirth = user.getBirthdate();
+            return Period.between(dateOfBirth, localDate).getYears() > age;
+        }).collect(Collectors.toList());
     }
 
+    /**
+     * -- Dodatkowa metoda
+     Wyszukiwanie użytkownika po częściowo znanym adresie e-mail, niepełnym
+     */
+    public List<User> findUsersByEmailContainingIgnoreCase(String email) {
+        return userRepository.findAll().stream().filter(user ->
+                user.getEmail().toLowerCase().contains(email.toLowerCase())).
+                collect(Collectors.toList());
+    }
 }

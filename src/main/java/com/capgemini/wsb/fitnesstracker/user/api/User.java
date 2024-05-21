@@ -33,6 +33,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    /**
+     Konstruktor
+     */
     public User(
             final String firstName,
             final String lastName,
@@ -45,7 +48,9 @@ public class User {
         this.email = email;
     }
 
-    // Generowanie getterów/setterów
+    /**
+     Gettery / Settery
+     */
 
     public Long getId() {
         return id;

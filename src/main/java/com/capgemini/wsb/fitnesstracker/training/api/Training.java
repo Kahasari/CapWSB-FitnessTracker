@@ -40,6 +40,9 @@ public class Training {
     @Column(name = "average_speed")
     private double averageSpeed;
 
+    /**
+     Konstruktor
+     */
     public Training(
             final User user,
             final Date startTime,
