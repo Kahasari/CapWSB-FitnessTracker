@@ -1,31 +1,41 @@
 package com.capgemini.wsb.fitnesstracker.training.internal;
 
 import com.capgemini.wsb.fitnesstracker.training.api.Training;
+import com.capgemini.wsb.fitnesstracker.user.api.User;
+import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
+import com.capgemini.wsb.fitnesstracker.user.api.UserProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  Obsłua operacji HTTP związanych z użytkownikami
  */
 @RestController
-@RequestMapping("/trainings")
+@RequestMapping("/v1/trainings")
+@RequiredArgsConstructor
 public class TrainingController {
     private final TrainingServiceImpl trainingService;
-
-    public TrainingController(TrainingServiceImpl trainingService) {
-        this.trainingService = trainingService;
-    }
+    private final TrainingMapper trainingMapper;
+    private final UserProvider userProvider;
 
     /**
-     Utworzenie nowego treningu
+     * Utworzenie nowego treningu
      */
     @PostMapping
-    public Training createTraining(@RequestBody Training training) {
-        return trainingService.newTrening(training);
+    public ResponseEntity<TrainingDTO> newTraining(@RequestBody NewTrainingDTO newTrainingDTO) {
+        if (newTrainingDTO.getUserId() == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        User user = userProvider.getUser(newTrainingDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(newTrainingDTO.getUserId()));
+        Training savedTraining = trainingService.newTrening(newTrainingDTO, user);
+        return new ResponseEntity<>(trainingMapper.trainingDTO(savedTraining), HttpStatus.CREATED);
     }
 
     /**
@@ -37,26 +47,26 @@ public class TrainingController {
     }
 
     /**
-     Pobranie treningów po id konkretnego usera
+     * Pobranie treningów po id konkretnego usera
      */
-    @GetMapping("/user/{userId}")
-    public List<Training> getTrainingsByUserId(@PathVariable Long userId) {
+    @GetMapping("/{userId}")
+    public List<TrainingDTO> getTrainingsByUserId(@PathVariable Long userId) {
         return trainingService.getTrainingsByUserId(userId);
     }
 
     /**
-     Pobranie ukończonych już treningów
+     * Pobranie ukończonych już treningów
      */
-    @GetMapping("/completed")
-    public List<Training> getCompletedTrainings(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return trainingService.getFinishedTrainings(date);
+    @GetMapping("/finished/{date}")
+    public List<TrainingDTO> getCompletedTrainings(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return trainingService.findCompletedTrainings(date);
     }
 
     /**
-     Pobranie treningów po rodzaju aktywności/treningu
+     * Pobranie treningów po rodzaju aktywności/treningu
      */
-    @GetMapping("/activity/{activityType}")
-    public List<Training> getTrainingsByActivityType(@PathVariable ActivityType activityType) {
+    @GetMapping("/activityType")
+    public List<TrainingDTO> getTrainingsByActivityType(@RequestParam ActivityType activityType) {
         return trainingService.getTrainingsByActivity(activityType);
     }
 
@@ -64,9 +74,14 @@ public class TrainingController {
      Aktualizacja danego treningu / Zmiana
      */
     @PutMapping("/{id}")
-    public Training updateTraining(@PathVariable Long id, @RequestBody Training updatedTraining) {
-        Optional<Training> updated = Optional.ofNullable(trainingService.updateTraining(id, updatedTraining));
-        return updated.orElse(null);
+    public ResponseEntity<TrainingDTO> updateTraining(@PathVariable Long id, @RequestBody NewTrainingDTO newTrainingDTO) {
+        if (newTrainingDTO.getUserId() == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        User user = userProvider.getUser(newTrainingDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(newTrainingDTO.getUserId()));
+        Training updatedTraining = trainingService.updateTraining(id, newTrainingDTO, user);
+        return ResponseEntity.status(HttpStatus.OK).body(trainingMapper.trainingDTO(updatedTraining));
     }
 }
 

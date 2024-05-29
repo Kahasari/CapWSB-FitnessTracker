@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
-Repo obsługujące operację dostępu do danych użytkowników, operacje CRUD + wyszukiwanie użytkowników
+ Repo obsługujące operację dostępu do danych użytkowników, operacje CRUD + wyszukiwanie użytkowników
  */
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -21,13 +21,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     default Optional<User> findByEmail(String email) {
         return findAll().stream()
-                        .filter(user -> Objects.equals(user.getEmail(), email))
-                        .findFirst();
+                .filter(user -> Objects.equals(user.getEmail(), email))
+                .findFirst();
     }
 
     /**
-    Wyszukiwanie użytkowników na podstawie dopasowanie (cześciowo) e-maila, z pominięciem wielkości liter
-    */
+     Wyszukiwanie użytkowników na podstawie dopasowanie (cześciowo) e-maila, z pominięciem wielkości liter
+     */
     List<User> findByEmailContainingIgnoreCase(String email);
 
 }

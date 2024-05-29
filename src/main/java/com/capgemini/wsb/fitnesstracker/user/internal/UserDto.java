@@ -1,15 +1,22 @@
 package com.capgemini.wsb.fitnesstracker.user.internal;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.annotation.Nullable;
+import lombok.Data;
 
 import java.time.LocalDate;
+@Data
 
-record UserDto(@Nullable Long Id, String firstName, String lastName,
-               @JsonFormat(pattern = "yyyy-MM-dd") LocalDate birthdate,
-               String email) {
+public class UserDto {
+    Long id;
+    String firstName;
+    String lastName;
+    LocalDate birthdate;
+    String email;
 
-}
-record UserSummaryDTO(Long id, String name) {
-
+    public UserDto(Long id, String firstName, String lastName, LocalDate birthdate, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
+        this.email = email;
+    }
 }

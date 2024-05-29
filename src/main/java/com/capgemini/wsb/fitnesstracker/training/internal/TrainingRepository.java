@@ -12,7 +12,7 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
     List<Training> findByUserId(Long userId);
 
     // wyszukiwanie wszystkich treningów zakończonych (po konkretnej zdefiniowanej dacie)
-    List<Training> findByEndTimeBefore (Date date);
+    List<Training> findByEndTimeAfter (Date date);
 
     // Wyszukiwanie po rodzaju treningu
     List<Training> findByActivityType (ActivityType activityType);
