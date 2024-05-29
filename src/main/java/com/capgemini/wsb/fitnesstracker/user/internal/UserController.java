@@ -29,8 +29,10 @@ public class UserController {
 
 
     /**
-     Pobranie listy użytkowników
-     Zwrócenie listy obiektów DTO reprezentujących użytkowników
+     * Pobranie listy użytkowników.
+     * Zwrócenie listy obiektów DTO reprezentujących użytkowników.
+     *
+     * @return ResponseEntity zawierający listę UserDto
      */
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -39,9 +41,10 @@ public class UserController {
     }
 
     /**
-     * Zwrócenie podsumowania użytkownika (id + imię)
+     * Zwrócenie podsumowania użytkownika (id + imię).
+     *
+     * @return Lista UserDto z podstawowymi informacjami o użytkownikach
      */
-
     @GetMapping("/simple")
     public List<UserDto> getAllUserSummaries() {
         List<User> summaries = userService.findAllUsers();
@@ -49,19 +52,11 @@ public class UserController {
     }
 
     /**
-     Dodanie kolejnego użytkownika
+     * Dodanie kolejnego użytkownika.
+     *
+     * @param userDto dane użytkownika który ma być dodany
+     * @return ResponseEntity zawierający dodany obiekt UserDto
      */
-//    @PostMapping
-//    public ResponseEntity<User> addUser(@RequestBody @Valid User userDto) {
-//
-//        // Demonstracja how to use @RequestBody
-//        System.out.println("User with e-mail: " + userDto.getEmail() + "passed to the request");
-//
-//        // TODO: saveUser with Service and return User
-//        User savedUser = userService.newUser(userDto);
-//        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
-//    }
-
     @PostMapping
     public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto userDto) {
         User newUser = userService.newUser(userMapper.toEntity(userDto));
@@ -69,7 +64,11 @@ public class UserController {
     }
 
     /**
-     * Pobranie szczegółów danego użytkownika
+     * Pobranie szczegółów danego użytkownika.
+     *
+     * @param id identyfikator użytkownika
+     * @return ResponseEntity zawierający znaleziony obiekt UserDto
+     * @throws UserNotFoundException jeśli użytkownik o podanym ID nie zostanie znaleziony
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id) {
@@ -79,7 +78,10 @@ public class UserController {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
     /**
-     * Usuwanie użytkownika
+     * Usuwanie użytkownika.
+     *
+     * @param id identyfikator użytkownika do usunięcia z bazy
+     * @return ResponseEntity bez zawartości
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeUser(@PathVariable Long id) {
@@ -88,7 +90,11 @@ public class UserController {
     }
 
     /**
-     * Zaktualizowanie danych użytkownika
+     * Aktualizacja danych użytkownika.
+     *
+     * @param id identyfikator użytkownika do aktualizacji
+     * @param userDto zaktualizowane dane użytkownika
+     * @return ResponseEntity zawierający obiekt UserDto po aktualizacji
      */
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> upToDateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
@@ -97,7 +103,10 @@ public class UserController {
     }
 
     /**
-     * Wyszukiwanie użytkownika po e-mailu
+     * Wyszukiwanie użytkownika po adresie e-mail.
+     *
+     * @param eMail adres e-mail do wyszukania
+     * @return ResponseEntity zawierający listę UserDto pasujących do podanego e-maila
      */
     @GetMapping("/email")
     public ResponseEntity<List<UserDto>> findUserByEmail(@RequestParam("email") String eMail) {
@@ -108,7 +117,10 @@ public class UserController {
     }
 
     /**
-     * Wyszukiwanie użytkownika starszego niż zadany parametr/wiek
+     * Wyszukiwanie użytkownika starszego niż zadany wiek
+     *
+     * @param time data, na podstawie której wyliczany jest wiek
+     * @return ResponseEntity zawierający listę UserDto starszych niż zadany wiek
      */
     @GetMapping("/older/{time}")
     public ResponseEntity<List<UserDto>> searchForUsersOlderThan(@PathVariable LocalDate time) {
@@ -118,8 +130,10 @@ public class UserController {
     }
 
     /**
-     * -- Dodatkowa metoda
-     Wyszukiwanie użytkownika po częściowo znanym adresie e-mail, niepełnym
+     * Wyszukiwanie użytkownika po częściowo znanym adresie e-mail.
+     *
+     * @param email część adresu e-mail do wyszukania
+     * @return ResponseEntity zawierający listę UserDto pasujących do podanego kawałka e-maila
      */
     @GetMapping("/email/ifSearch")
     public ResponseEntity<List<UserDto>> findUsersByEmailContainingIgnoreCase (@RequestParam String email) {

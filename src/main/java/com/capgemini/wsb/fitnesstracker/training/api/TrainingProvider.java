@@ -6,13 +6,18 @@ import java.util.Optional;
 public interface TrainingProvider {
 
     /**
-     * Retrieves a training based on their ID.
-     * If the user with given ID is not found, then {@link Optional#empty()} will be returned.
+     * Pobiera trening na podstawie id.
+     * Jeśli trening o podanym id nie zostanie znaleziony, zostanie zwrócony {@link Optional#empty()}.
      *
-     * @param trainingId id of the training to be searched
-     * @return An {@link Optional} containing the located Training, or {@link Optional#empty()} if not found
+     * @param trainingId identyfikator treningu do wyszukania
+     * @return {@link Optional} zawierający znaleziony trening lub {@link Optional#empty()} jeśli nie znaleziono
      */
     Optional<Training> getTraining(Long trainingId);
+    /**
+     * Pobiera wszystkie treningi.
+     *
+     * @return lista wszystkich treningów
+     */
     List<Training> getAllTrainings();
 
 }

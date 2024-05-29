@@ -23,6 +23,13 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingRepository trainingRepository;
     private final TrainingMapper trainingMapper;
 
+    /**
+     * Pobranie treningu na podstawie id
+     *
+     * @param trainingId id treningu
+     * @return {@link Optional} zawierający znaleziony trening lub {@link Optional#empty()} jeśli nie znaleziono
+     */
+
     @Override
     public Optional<Training> getTraining(final Long trainingId) {
         try {
@@ -33,14 +40,20 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     /**
-     Pobranei wsystkich treningów
+     * Pobranie wszystkich treningów.
+     *
+     * @return lista wszystkich treningów
      */
     public List<Training> getAllTrainings() {
         return trainingRepository.findAll();
     }
 
     /**
-     Utworzenie nowego treningu
+     * Utworzenie nowego treningu.
+     *
+     * @param newTrainingDTO dane nowego treningu
+     * @param user użytkownik powiązany z treningiem
+     * @return utworzony trening
      */
     public Training newTrening(NewTrainingDTO newTrainingDTO, User user) {
         Training training = trainingMapper.toEntity(newTrainingDTO, user);
@@ -48,21 +61,30 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     /**
-     * Pobranie treningu po Id usera
+     * Pobranie treningów na podstawie id użytkownika.
+     *
+     * @param userId id użytkownika
+     * @return lista {@link TrainingDTO} zawierających treningi użytkownika
      */
     public List<TrainingDTO> getTrainingsByUserId (Long userId) {
         return trainingRepository.findByUserId(userId).stream().map(trainingMapper::trainingDTO).collect(Collectors.toList());
     }
 
     /**
-     * Pobranie zakończonych treningów po dacie
+     * Pobranie zakończonych treningów po dacie.
+     *
+     * @param date data końca treningu
+     * @return lista {@link TrainingDTO} zawierających zakończone treningi
      */
     public List<TrainingDTO> findCompletedTrainings(Date date) {
         return trainingRepository.findByEndTimeAfter(date).stream().map(trainingMapper::trainingDTO).collect(Collectors.toList());
     }
 
     /**
-     * Pobranie treningów po rodzaju aktywności
+     * Pobranie treningów na podstawie rodzaju aktywności.
+     *
+     * @param activityType typ aktywności
+     * @return lista {@link TrainingDTO} zawierających treningi o danym rodzaju aktywności
      */
     public List<TrainingDTO> getTrainingsByActivity (ActivityType activityType) {
         return trainingRepository.findByActivityType(activityType).stream().map(trainingMapper::trainingDTO).collect(Collectors.toList());
@@ -70,7 +92,13 @@ public class TrainingServiceImpl implements TrainingService {
 
 
     /**
-     Aktualizacja wybranego parametru treningu
+     * Aktualizacja wybranego treningu.
+     *
+     * @param id id treningu do zaktualizowania
+     * @param trainingUpdateDTO dane do aktualizacji
+     * @param user użytkownik powiązany z treningiem
+     * @return zaktualizowany trening
+     * @throws TrainingNotFoundException jeśli trening o podanym id nie zostanie znaleziony
      */
     public Training updateTraining(Long id, NewTrainingDTO trainingUpdateDTO, User user) {
         return trainingRepository.findById(id)

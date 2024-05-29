@@ -25,7 +25,10 @@ public class TrainingController {
     private final UserProvider userProvider;
 
     /**
-     * Utworzenie nowego treningu
+     * Utworzenie nowego treningu.
+     *
+     * @param newTrainingDTO dane nowego treningu
+     * @return ResponseEntity zawierający utworzony obiekt TrainingDTO
      */
     @PostMapping
     public ResponseEntity<TrainingDTO> newTraining(@RequestBody NewTrainingDTO newTrainingDTO) {
@@ -39,7 +42,9 @@ public class TrainingController {
     }
 
     /**
-     Pobranie wszystkich treningów
+     * Pobranie wszystkich treningów.
+     *
+     * @return lista wszystkich treningów
      */
     @GetMapping
     public List<Training> getAllTrainings() {
@@ -47,7 +52,10 @@ public class TrainingController {
     }
 
     /**
-     * Pobranie treningów po id konkretnego usera
+     * Pobranie treningów po id użytkownika.
+     *
+     * @param userId idr użytkownika
+     * @return lista TrainingDTO zawierająca treningi użytkownika
      */
     @GetMapping("/{userId}")
     public List<TrainingDTO> getTrainingsByUserId(@PathVariable Long userId) {
@@ -55,7 +63,10 @@ public class TrainingController {
     }
 
     /**
-     * Pobranie ukończonych już treningów
+     * Pobranie zakończonych treningów po dacie.
+     *
+     * @param date data zakończenia treningu
+     * @return lista TrainingDTO zawierająca zakończone treningi po danej dacie
      */
     @GetMapping("/finished/{date}")
     public List<TrainingDTO> getCompletedTrainings(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
@@ -63,7 +74,10 @@ public class TrainingController {
     }
 
     /**
-     * Pobranie treningów po rodzaju aktywności/treningu
+     * Pobranie treningów po rodzaju aktywności.
+     *
+     * @param activityType rodzaj aktywności
+     * @return lista TrainingDTO zawierająca treningi o danym typie aktywności
      */
     @GetMapping("/activityType")
     public List<TrainingDTO> getTrainingsByActivityType(@RequestParam ActivityType activityType) {
@@ -71,7 +85,11 @@ public class TrainingController {
     }
 
     /**
-     Aktualizacja danego treningu / Zmiana
+     * Aktualizacja wybranego treningu.
+     *
+     * @param id id treningu do zaktualizowania
+     * @param newTrainingDTO dane do aktualizacji treningu
+     * @return ResponseEntity zawierający zaktualizowany obiekt TrainingDTO
      */
     @PutMapping("/{id}")
     public ResponseEntity<TrainingDTO> updateTraining(@PathVariable Long id, @RequestBody NewTrainingDTO newTrainingDTO) {

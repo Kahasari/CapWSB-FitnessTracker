@@ -6,31 +6,46 @@ import java.util.Optional;
 public interface UserProvider {
 
     /**
-     * Retrieves a user based on their ID.
-     * If the user with given ID is not found, then {@link Optional#empty()} will be returned.
+     * Pobiera użytkownika na podstawie jego id
+     * Jeśli użytkownik o podanym id nie zostanie znaleziony, zostanie zwrócony {@link Optional#empty()}.
      *
-     * @param userId id of the user to be searched
-     * @return An {@link Optional} containing the located user, or {@link Optional#empty()} if not found
+     * @param userId id użytkownika do wyszukania
+     * @return {@link Optional} zawierający znalezionego użytkownika lub {@link Optional#empty()} jeśli nie znaleziono
      */
     Optional<User> getUser(Long userId);
 
     /**
-     * Retrieves a user based on their email.
-     * If the user with given email is not found, then {@link Optional#empty()} will be returned.
+     * Pobiera użytkownika na podstawie jego adresu e-mail.
+     * Jeśli użytkownik o podanym adresie e-mail nie istnieje zwróć {@link Optional#empty()}.
      *
-     * @param email The email of the user to be searched
-     * @return An {@link Optional} containing the located user, or {@link Optional#empty()} if not found
+     * @param email adres e-mail użytkownika do wyszukania
+     * @return {@link Optional} zawierający znalezionego użytkownika lub {@link Optional#empty()} jeśli nie istnieje
      */
     Optional<User> getUserByEmail(String email);
 
     /**
-     * Retrieves all users.
+     * Pobiera wszystkich użytkowników.
      *
-     * @return An {@link Optional} containing the all users,
+     * @return lista wszystkich użytkowników
      */
     List<User> findAllUsers();
 
+    /**
+     * Pobiera użytkowników starszych niż zadany wiek.
+     *
+     * @param age wiek do porównania
+     * @return lista użytkowników starszych niż zadany wiek
+     */
+
     List<User> findUsersOlderThanX (int age);
+
+    /**
+     * Pobiera użytkowników, których adres e-mail zawiera część zadanego "stringa"
+     *
+     * @param email część adresu e-mail do wyszukania
+     * @return lista użytkowników z adresami e-mail zawierającymi podanego "stringa"
+     */
     List<User> findUsersByEmailContainingIgnoreCase(String email);
+
 
 }

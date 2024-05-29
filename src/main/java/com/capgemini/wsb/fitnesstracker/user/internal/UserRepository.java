@@ -14,10 +14,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Query searching users by email address. It matches by exact match.
+     * Wyszukiwanie użytkowników na podstawie email, dopasowanie jeden do jednego
      *
-     * @param email email of the user to search
-     * @return {@link Optional} containing found user or {@link Optional#empty()} if none matched
+     * @param email adres e-mail użytkownika do wyszukania
+     * @return {@link Optional} zawierający znalezionego użytkownika lub {@link Optional#empty()} jeśli żaden nie został znaleziony
      */
     default Optional<User> findByEmail(String email) {
         return findAll().stream()
@@ -26,7 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     }
 
     /**
-     Wyszukiwanie użytkowników na podstawie dopasowanie (cześciowo) e-maila, z pominięciem wielkości liter
+     * Wyszukiwanie użytkowników na podstawie częściowego dopasowania adresu e-mail, z pominięciem wielkości liter.
+     *
+     * @param email część adresu e-mail do wyszukania
+     * @return Lista użytkowników których email zawiera zadanego "stringa", wielkość liter bez znaczenia
      */
     List<User> findByEmailContainingIgnoreCase(String email);
 

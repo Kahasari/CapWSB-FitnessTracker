@@ -8,12 +8,27 @@ import java.util.List;
 
 public interface TrainingRepository extends JpaRepository<Training, Long> {
 
-    //wyszukiwanie treningów dla określonego Użytkownika:
+    /**
+     * Wyszukiwanie treningów dla określonego użytkownika.
+     *
+     * @param userId identyfikator użytkownika
+     * @return lista treningów użytkownika
+     */
     List<Training> findByUserId(Long userId);
 
-    // wyszukiwanie wszystkich treningów zakończonych (po konkretnej zdefiniowanej dacie)
+    /**
+     * Wyszukiwanie wszystkich treningów zakończonych po konkretnej dacie.
+     *
+     * @param date data zakończenia treningu
+     * @return lista zakończonych treningów po dacie
+     */
     List<Training> findByEndTimeAfter (Date date);
 
-    // Wyszukiwanie po rodzaju treningu
+    /**
+     * Wyszukiwanie treningów po rodzaju aktywności.
+     *
+     * @param activityType rodzaj aktywności
+     * @return lista treningów o danej aktywności
+     */
     List<Training> findByActivityType (ActivityType activityType);
 }

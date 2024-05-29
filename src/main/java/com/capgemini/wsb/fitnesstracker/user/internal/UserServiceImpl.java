@@ -24,7 +24,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     /**
-     Pobranie danych użytkownika na podstawie wprowadzonego identyfikatora
+     * Pobranie danych użytkownika na podstawie Id
+     *
+     * @param userId identyfikator użytkownika (Id)
+     * @return An {@link Optional} containing the located user, or {@link Optional#empty()} if not found
      */
     @Override
     public Optional<User> getUser(final Long userId) {
@@ -32,8 +35,11 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     Pobranie danych użytkownika na podstawie wprowadzonego adresu e-mail,
-     czyli wyświetlenie danych użytkownika, który posiada konkretny adres e-mail.
+     * Pobranie danych użytkownika na podstawie adresu e-mail,
+     * wyświetlenie danych użytkownika, który ma dany email
+     *
+     * @param email adres e-mail użytkownika
+     * @return An {@link Optional} containing the located user, or {@link Optional#empty()} if not found
      */
     @Override
     public Optional<User> getUserByEmail(final String email) {
@@ -41,14 +47,19 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     Wyświetlenie wszystkich użytkowników w bazie
+     * Wyświetlenie wszystkich użytkowników w bazie.
+     *
+     * @return Lista wszystkich użytkowników
      */
     @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
     /**
-     Utworzenie nowego użytkownika
+     * Utworzenie nowego użytkownika.
+     *
+     * @param user obiekt User do utworzenia
+     * @return Utworzony obiekt User
      */
     @Override
     public User newUser(final User user) {
@@ -60,10 +71,10 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     Wylistowanie podstawowych informacji o wszystkich użytkownikach, w tym przypadku wyłącznie ID + nazwa klienta
+     * Wypisanie kluczowych informacji o wszystkich użytkownikach, Id + imie + nazwisko
+     *
+     * @return Lista obiektów UserSummaryDTO zawierających podstawowe informacje o użytkownikach
      */
-    // Zaktualizowano pod wytyczne, wcześniejs metoda zwracała ID + imię + nazwisko
-    // Powinna zwracać Id + imie, tak jak w przygotowanym rekordzie UserSummaryDTO.
     public List<UserSummaryDTO> getAllUserSummaries() {
         return userRepository.findAll()
                 .stream()
@@ -72,7 +83,9 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     Usunięcie z bazy użytkownika o konkretnym ID
+     * Usunięcie z bazy użytkownika o konkretnym ID.
+     *
+     * @param userId identyfikator użytkownika do wyrzucenia z bazy
      */
     public void deleteUser(Long userId) {
         try {
@@ -83,7 +96,12 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     Aktualizacja danych/parametrów wybranego użytkownika
+     * Aktualizacja danych użytkownika
+     *
+     * @param userId identyfikator użytkownika do zaktualizowania
+     * @param updatedUser zaktualizowane dane użytkownika
+     * @return Zaktualizowany obiekt User
+     * @throws UserNotFoundException jeśli użytkownik o podanym ID nie istnieje w bazie
      */
     public User updateUser(Long userId, User updatedUser) {
         return userRepository.findById(userId)
@@ -98,7 +116,10 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     Wyszukiwanie danego użytkownika jeśli jest starszy niż dany wiek
+     * Wyszukiwanie danego użytkownika, jeśli jest starszy niż dany wiek.
+     *
+     * @param age wiek do porównania
+     * @return Lista użytkowników starszych niż podany wiek
      */
     public List<User> findUsersOlderThanX(int age) {
         LocalDate localDate = LocalDate.now();
@@ -108,9 +129,11 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * -- Dodatkowa metoda
-     Wyszukiwanie użytkownika po częściowo znanym adresie e-mail, niepełnym
-     */
+    * Wyszukiwanie użytkownika po niepełnym adresie email
+    *
+    * @param email część adresu email do wyszukania
+    * @return Lista użytkowników których email zawiera w sobie zadany "string", zignorowanie wielkości liter
+    */
     public List<User> findUsersByEmailContainingIgnoreCase(String email) {
         return userRepository.findAll().stream()
                 .filter(user -> user.getEmail().toLowerCase().contains(email.toLowerCase()))

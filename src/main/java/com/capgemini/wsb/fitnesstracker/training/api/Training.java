@@ -58,6 +58,9 @@ public class Training {
         this.averageSpeed = averageSpeed;
     }
 
+    /**
+     Gettery / Settery
+     */
     public Long getId() {
         return id;
     }
