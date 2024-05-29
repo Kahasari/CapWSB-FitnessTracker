@@ -18,10 +18,10 @@ class UserMapper {
 
     User toEntity(@Valid UserDto userDto) {
         return new User(
-                userDto.firstName,
-                userDto.lastName,
-                userDto.birthdate,
-                userDto.email);
+                userDto.getFirstName(),
+                userDto.getLastName(),
+                userDto.getBirthdate(),
+                userDto.getEmail());
     }
 
 }

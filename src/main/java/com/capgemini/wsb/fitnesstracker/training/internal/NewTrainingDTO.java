@@ -13,4 +13,5 @@ public class NewTrainingDTO {
     ActivityType activityType;
     double distance;
     double averageSpeed;
+
 }
